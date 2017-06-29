@@ -1,0 +1,64 @@
+\documentclass[12pt]{article}         % the type of document and font size (default 10pt)
+\usepackage[margin=1.0in]{geometry}   % sets all margins to 1in, can be changed
+\usepackage{moreverb}                 % for verbatimtabinput -- LaTeX environment
+\usepackage{url}                      % for \url{} command
+\usepackage{amssymb}                  % for many mathematical symbols
+\usepackage[pdftex]{lscape}           % for landscaped tables
+\usepackage{longtable}                % for tables that break over multiple pages
+\title{Energy Building Analysis}  % to specify title
+\author{Alexander Kell}          % to specify author(s)
+\begin{document}                      % document begins here
+
+% If .nw file contains graphs: To specify that EPS/PDF graph files are to be 
+% saved to 'graphics' sub-folder
+%     NOTE: 'graphics' sub-folder must exist prior to Sweave step
+%\SweaveOpts{prefix.string=graphics/plot}
+
+% If .nw file contains graphs: to modify (shrink/enlarge} size of graphics 
+% file inserted
+%         NOTE: can be specified/modified before any graph chunk
+\setkeys{Gin}{width=1.0\textwidth}
+
+\maketitle              % makes the title
+%\tableofcontents        % inserts TOC (section, sub-section, etc numbers and titles)
+%\listoftables           % inserts LOT (numbers and captions)
+%\listoffigures          % inserts LOF (numbers and captions)
+%                        %     NOTE: graph chunk must be wrapped with \begin{figure}, 
+%                        %  \end{figure}, and \caption{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Where everything else goes
+
+\section{Introduction}
+
+Analysing different buildings based on their energy usage may bring us many benefits. Helping us understand what amounts of energy people use, how they use it, and why they use it can lead us to new insights. 
+\\\\
+Some of these insights could enable us to target customers to change their usage habits, or inform us on the type of products users may require. It may also help us during the planning stage of electricity generation.\\
+
+Firstly I downloaded data from the following website:\\
+http://en.openei.org/datasets/dataset/commercial-and-residential-hourly-load-profiles-for-all-tmy3-locations-in-the-united-states.
+
+This contains data from multiple buildings, recorded every hour for the entire year of 2004.
+
+\section{Analysis}
+\subsection{Data Manipulation}
+
+<<echo=FALSE, results='hide', message=FALSE, warning=FALSE>>=
+library(tibble)
+library("plyr")
+library(dplyr)
+library("ggplot2")
+library("lubridate")
+library(pracma)
+library("reshape")
+library("reshape2")
+@
+
+The first step was an introductory manipulation of the data, to gain rapid insights. Initially, information on the days, months, and hours were required by converting the date to a format easily understandable by 
+
+<<results='hide',echo=FALSE>>=
+
+
+@
+
+
+\end{document}

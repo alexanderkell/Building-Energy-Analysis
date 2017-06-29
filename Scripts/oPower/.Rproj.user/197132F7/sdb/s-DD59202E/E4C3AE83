@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\\documentclass[12pt]{article}         % the type of document and font size (default 10pt)\n\\usepackage[margin=1.0in]{geometry}   % sets all margins to 1in, can be changed\n\\usepackage{moreverb}                 % for verbatimtabinput -- LaTeX environment\n\\usepackage{url}                      % for \\url{} command\n\\usepackage{amssymb}                  % for many mathematical symbols\n\\usepackage[pdftex]{lscape}           % for landscaped tables\n\\usepackage{longtable}                % for tables that break over multiple pages\n\\title{Energy Building Analysis}  % to specify title\n\\author{Alexander Kell}          % to specify author(s)\n\\begin{document}                      % document begins here\n\n% If .nw file contains graphs: To specify that EPS/PDF graph files are to be \n% saved to 'graphics' sub-folder\n%     NOTE: 'graphics' sub-folder must exist prior to Sweave step\n%\\SweaveOpts{prefix.string=graphics/plot}\n\n% If .nw file contains graphs: to modify (shrink/enlarge} size of graphics \n% file inserted\n%         NOTE: can be specified/modified before any graph chunk\n\\setkeys{Gin}{width=1.0\\textwidth}\n\n\\maketitle              % makes the title\n%\\tableofcontents        % inserts TOC (section, sub-section, etc numbers and titles)\n%\\listoftables           % inserts LOT (numbers and captions)\n%\\listoffigures          % inserts LOF (numbers and captions)\n%                        %     NOTE: graph chunk must be wrapped with \\begin{figure}, \n%                        %  \\end{figure}, and \\caption{}\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n% Where everything else goes\n\n\\section{Introduction}\n\nAnalysing different buildings based on their energy usage may bring us many benefits. Helping us understand what amounts of energy people use, how they use it, and why they use it can lead us to new insights. \n\\\\\\\\\nSome of these insights could enable us to target customers to change their usage habits, or inform us on the type of products users may require. It may also help us during the planning stage of electricity generation.\\\\\n\nFirstly I downloaded data from the following website:\\\\\nhttp://en.openei.org/datasets/dataset/commercial-and-residential-hourly-load-profiles-for-all-tmy3-locations-in-the-united-states.\n\nThis contains data from multiple buildings, recorded every hour for the entire year of 2004.\n\n\\section{Analysis}\n\\subsection{Data Manipulation}\n\n<<echo=FALSE, results='hide', message=FALSE, warning=FALSE>>=\nlibrary(tibble)\nlibrary(\"plyr\")\nlibrary(dplyr)\nlibrary(\"ggplot2\")\nlibrary(\"lubridate\")\nlibrary(pracma)\nlibrary(\"reshape\")\nlibrary(\"reshape2\")\n@\n\nThe first step was an introductory manipulation of the data, to gain rapid insights. Initially, information on the days, months, and hours were required by converting the date to a format easily understandable by \n\n<<results='hide',echo=FALSE>>=\n\n\n@\n\n\n\\end{document}",
+    "created" : 1498753613848.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "134672234",
+    "id" : "E4C3AE83",
+    "lastKnownWriteTime" : 1498758716,
+    "last_content_update" : 1498758716687,
+    "path" : "~/Documents1/PhD/Opower/Write Up/Report.Rnw",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "sweave"
+}

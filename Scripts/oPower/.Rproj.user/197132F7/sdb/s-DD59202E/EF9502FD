@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\\documentclass[12pt]{article}         % the type of document and font size (default 10pt)\n\\usepackage[margin=1.0in]{geometry}   % sets all margins to 1in, can be changed\n\\usepackage{moreverb}                 % for verbatimtabinput -- LaTeX environment\n\\usepackage{url}                      % for \\url{} command\n\\usepackage{amssymb}                  % for many mathematical symbols\n\\usepackage[pdftex]{lscape}           % for landscaped tables\n\\usepackage{longtable}                % for tables that break over multiple pages\n\\title{Easiest Sweave Template Ever}  % to specify title\n\\author{Your name goes here}          % to specify author(s)\n\\begin{document}                      % document begins here\n\n% If .nw file contains graphs: To specify that EPS/PDF graph files are to be \n% saved to 'graphics' sub-folder\n%     NOTE: 'graphics' sub-folder must exist prior to Sweave step\n%\\SweaveOpts{prefix.string=graphics/plot}\n\n% If .nw file contains graphs: to modify (shrink/enlarge} size of graphics \n% file inserted\n%         NOTE: can be specified/modified before any graph chunk\n\\setkeys{Gin}{width=1.0\\textwidth}\n\n\\maketitle              % makes the title\n%\\tableofcontents        % inserts TOC (section, sub-section, etc numbers and titles)\n%\\listoftables           % inserts LOT (numbers and captions)\n%\\listoffigures          % inserts LOF (numbers and captions)\n%                        %     NOTE: graph chunk must be wrapped with \\begin{figure}, \n%                        %  \\end{figure}, and \\caption{}\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n% Where everything else goes\n\n\\section{How to typeset \\textsf{R} code}\n\nIf you want to see both the input and output, do this:\n\n<<>>=\nrunif(10)\n@\n\nIf you want to see output, but no input, do this:\n\n<<echo = FALSE>>=\nrunif(10)\n@\n\nIf you want to see input, but no output, do this:\n\n<<results = 'hide'>>=\nrunif(13)\n@\n\nIf you want to run some \\textsf{R} code but hide the input/output from the reader then you can do both at the same time:\n\n<<echo = FALSE, results = 'hide'>>=\nx <- 2:11\ny <- runif(10)\n@\n\n\\bigskip   % leave some empty space (optional)\n\nand you can double-check that it worked later (if you like)\n\n<<keep.source = TRUE>>=\nx  # use keep.source=TRUE if you want comments printed\ny\n@\n\nIf you want to write some \\textsf{R} code but not have it evaluated at all then do this:\n\n<<eval = FALSE>>=\n# whatever you write here must be syntactically correct R code\nrunif(1000000000000000000000000)\n@\n\nIf you would like to include a figure that's generated completely by \\textsf{R} code, then you can do something like the following.\n\n\\begin{figure}\n<<echo = FALSE, fig = TRUE>>=\nplot(y ~ x)\n@\n\\caption{Here is the plot we made}\n\\end{figure}\n\n\nSometimes we would like the output to look like \\LaTeX\\ output instead of \\textsf{R} output.  In that case, do the following.\n\n<<results = 'tex'>>=\nlibrary(xtable)\nxtable(summary(lm(y ~ x)), caption = \"Here is the table we made\")\n@\n\n\n\\end{document}\n\n",
+    "created" : 1498757641746.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2566930132",
+    "id" : "EF9502FD",
+    "lastKnownWriteTime" : 1498757736,
+    "last_content_update" : 1498757736007,
+    "path" : "~/Desktop/Untitled.Rnw",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "sweave"
+}
