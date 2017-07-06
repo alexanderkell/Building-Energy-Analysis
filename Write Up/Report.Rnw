@@ -5,6 +5,9 @@
 \usepackage{amssymb}                  % for many mathematical symbols
 \usepackage[pdftex]{lscape}           % for landscaped tables
 \usepackage{longtable}                % for tables that break over multiple pages
+\usepackage[normalem]{ulem}
+\useunder{\uline}{\ul}{}
+
 \title{Energy Building Analysis}  % to specify title
 \author{Alexander Kell}          % to specify author(s)
 \begin{document}                      % document begins here
@@ -28,21 +31,57 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Where everything else goes
 
+
 \section{Introduction}
 
-Analysing different buildings based on their energy usage may bring us many benefits. Helping us understand what amounts of energy people use, how they use it, and why they use it can lead us to new insights. 
+Analysing different buildings based on their energy usage can bring us many benefits. We can understand what amounts of energy people use, how they use it, and why they use it. All this information can lead us to new insights. 
 \\\\
-Some of these insights could enable us to target customers to change their usage habits, or inform us on the type of products users may require. It may also help us during the planning stage of electricity generation.\\
+Insights such as these enable us to target customers, and persuade them to change their usage habits, or inform us on the type of financial products users may require. \\
+
+Having a thorough analysis on usage habbits can help us during the planning stage of electricity generation, especially when these are matched to weather conditions. \\
+
+\section{Explanation of Data}
 
 Firstly I downloaded data from the following website:\\
 http://en.openei.org/datasets/dataset/commercial-and-residential-hourly-load-profiles-for-all-tmy3-locations-in-the-united-states.
 
 This contains data from multiple buildings, recorded every hour for the entire year of 2004.
 
+The data is made up of 15,000 CSV files. Each file contains an hourly breakdown of different usages of energy. Such as the overall amount of electricity used per hour, and overall amount of gas used per hour. There is also more specific data such as what was using the electricity and gas. \\
+
+The specific data is broken down into usage of heating, cooling, interior lights, exterior lights, water heating, interior gas equipment, and interior electricity equipment.\\
+
+A total of 8,760 samples are recorded per building. These correspond to each hour within a given year.\\
+
+The data is made up of many different building types, which are displayed below. 
+
+\begin{table}[]
+\centering
+\label{my-label}
+\begin{tabular}{|l|}
+\hline
+\textbf{Type of Building} \\ \hline
+Stand Alone Retail        \\ \hline
+Mall                      \\ \hline
+Secondary School          \\ \hline
+Primary School            \\ \hline
+Medium Office             \\ \hline
+Large Office              \\ \hline
+Small Hotel               \\ \hline
+Apartment                 \\ \hline
+Full Service Restaurant   \\ \hline
+Quick Service Restaurant  \\ \hline
+Hospital                  \\ \hline
+Supermarket               \\ \hline
+Warehouse                 \\ \hline
+\end{tabular}
+\caption{Types of buildings available in data}
+\end{table}
+
 \section{Analysis}
 \subsection{Data Manipulation}
 
-<<echo=FALSE, results='hide', message=FALSE, warning=FALSE>>=
+<<import_library, echo=FALSE, results='hide', message=FALSE, warning=FALSE>>=
 library(tibble)
 library("plyr")
 library(dplyr)
@@ -51,14 +90,392 @@ library("lubridate")
 library(pracma)
 library("reshape")
 library("reshape2")
+library(devtools)
+library(ggbiplot)
+library(cluster)
+library(caret)
+library(wavelets)
+library(TSclust)
+library(dtw)
 @
 
-The first step was an introductory manipulation of the data, to gain rapid insights. Initially, information on the days, months, and hours were required by converting the date to a format easily understandable by 
 
-<<results='hide',echo=FALSE>>=
 
+The first step was to import the data into a single data frame into R. The data imported was electricity usage of each building.
+
+<<import_data, echo=FALSE, cache=TRUE>>=
+# Set working directory and gather file names
+setwd("~/Documents1/PhD/Opower/Data/Data/Run")
+filenames = list.files(recursive = T)
+# Take a sample of csv filenames for decrease in computation time
+filenames10 = sample(filenames,200,replace=FALSE)
+
+
+# Import files and append name of file
+base_data = do.call(rbind,
+                    lapply(filenames10, function(x)
+                      cbind(file=x,read.csv(x)[,c("Date.Time",
+                        "Electricity.Facility..kW..Hourly.",
+                        "Gas.Facility..kW..Hourly.")]
+                      )))
 
 @
+
+
+I began by converting the data into an R friendly format. Namely, by converting the time and date information into a format suitable for R.
+
+
+<<POSIXct, results='hide', cache=TRUE, echo=FALSE>>=
+base_data$Date.Time = gsub("/",".",gsub(":",".",base_data$Date.Time))
+lhs = substr(base_data$Date.Time,2,6)
+rhs = gsub('^(.{6}).','.2004 ',base_data$Date.Time)
+base_data$Date.Time = paste0(lhs,rhs)
+
+base_data$Date.Time = as.POSIXct(strptime(base_data$Date.Time, "%m.%d.%Y %H.%M.%S")
+                                 , origin="1900-01-01")
+
+@
+
+Next information was extracted such as the day of the week, month, and hour. This enabled me to quickly plot the data and begin exploring the data.
+
+<<extract_day, results='hide', warning=FALSE, cache=TRUE, echo=FALSE>>=
+base_data=transform(base_data,day=weekdays(Date.Time))
+base_data=transform(base_data,month=factor(months(Date.Time), levels=months(Date.Time)))
+base_data=transform(base_data,hour=hour(Date.Time))
+base_data=transform(base_data,timestamp=as.numeric(Date.Time))
+base_data=na.omit(base_data)
+@
+
+
+\subsection{Early Stage Plotting}
+
+I plotted all the electricity used over a year throug the use of boxplots. Each boxplots relates to a different month and enables us to see average changes in electricity over a year.
+
+<<dirtyplots, echo=FALSE, cache=TRUE>>=
+ggplot(data=filter(base_data,file==base_data[1,1]), aes(factor(hour),Electricity.Facility..kW..Hourly.)) + geom_boxplot() + facet_wrap(~month) + labs(title="Boxplot of Hourly Electricity Used over a Year for a Residential Building")+xlab("Hours of each day") + ylab("Electricity used hourly (kW)") 
+@
+
+The plot shows that the residential building in question exhibits a similar pattern month on month throughout the year. There seems to be a smaller peak every day at 8am, and a larger peak later on at night at 9pm. \\
+
+This is due to the natural cycle of a working day. Where a subject would wake up and use electricity in the morning for breakfast and showering before going to work, and the later peak explained by the person returning from work and requiring the use of lights, entertainment and cooking.\\
+
+It can be seen that the total amount of electricity used per month differs. This can be explained by the relative temperature during each of the seasons. The winter months from December to February exhibit a higher overall average usage then other months, which can be explained by electrical heating. \\
+
+The months of July and August exhibit a large variation of usage. This can be explained by the increase heat on certain days during the summer months.
+
+
+
+
+<<gas_plot, echo=FALSE, cache=TRUE>>=
+ggplot(data=filter(base_data,file==base_data[1,1]), aes(factor(hour),Gas.Facility..kW..Hourly.)) + geom_boxplot() + facet_wrap(~month) + labs(title="Boxplot of Hourly Gas Used over a Year for a Residential Building")+xlab("Hours of each day") + ylab("Gas used hourly (kW)") 
+@
+
+The plot above shows the amount of gas used over a year for the same building in the previous plot. The difference in gas used between the summer and winter months is large here. With small amounts of gas used in July and August, and large amounts of gas used between November and February for heating purposes. \\
+
+The plot below shows a subset of different building types. Here we see an electricity profile for different building types. 
+
+<<plot_different_profiles, cache=TRUE, echo=FALSE>>=
+avg_elec_per_hour_long = ddply(base_data,c("file","hour"),summarise,avg_elec_p_hour = mean(Electricity.Facility..kW..Hourly.))
+avg_elec_per_hour_long = ddply(avg_elec_per_hour_long,"file",mutate, Building_Type = ifelse(is.na(strsplit(strsplit(strsplit(strsplit(as.character(file),"/")[[1]][3],"2004")[[1]][1],"RefBldg")[[1]][2],"New")[[1]][1]),"Residential",strsplit(strsplit(strsplit(strsplit(as.character(file),"/")[[1]][3],"2004")[[1]][1],"RefBldg")[[1]][2],"New")[[1]][1]),scaled_dat=avg_elec_p_hour/mean(avg_elec_p_hour))
+
+
+ggplot(avg_elec_per_hour_long[481:1080,]) + geom_line(aes(hour, avg_elec_p_hour)) + facet_wrap(~file + Building_Type, scale="free") +
+  labs(title="Electricity Profiles of Different Buildings")+xlab("Hours of the day") + ylab("Electricity used per hour (kW)") 
+
+@
+
+The electricity profiles can be split roughly into two categories. Residential properties and commercial properties.\\
+
+Commercial properties have low energy usage outside of work hours, and high usage during work hours. This is opposite to that of residential properties which have peak times outside of the working day.\\
+
+These characteristics are to be expected based on prior knowledge of human behaviour. \\
+
+Apartments, residential properties, and hotels follow a similar pattern, whilst office, hospital, schools, and supermarkets follow another. Although offices, schools, and hospitals display similar patterns, they differ in total electricity usage.For instance, hospitals use a large amount of power. With a minimum amount of electricity of 900 kW, and a maximum of 1300kW at peak times. Secondary schools, however, use a minimum of 100 kW and maximum of 600kW. This can be explained by the relative requirements of each building, and overnight usage. \\
+
+Restaurants follow a slightly different pattern where there are three peaks throughout the day. These peaks are during the hours of breakfast, lunch and dinner. The times that restaurants are busiest. \\
+
+
+\subsection{Averaging of hourly data}
+
+The data plotted was averaged to reduce the total length of the time series. The total length of the data per building was 8,760. Counting up the 15,000 CSV files, this makes up a huge amount of data. A lower diminesion would allow us to speed up the running of the algorithms, and at the same time preserve data. It can be seen from the plots above that a similar shape is recognised per day of the time series. This enables us to preserve the shape, and information of the time series. \\
+
+A plot of the average hourly electricity used in a year, per hour is displayed below.
+
+<<Feature_Extraction, cache=TRUE, echo=FALSE>>=
+# Features
+feature = ddply(base_data, "file", summarise,
+                Building_Type = ifelse(is.na(strsplit(strsplit(strsplit(strsplit(as.character(file),"/")[[1]][3],"2004")[[1]][1],"RefBldg")[[1]][2],"New")[[1]][1]),"Residential",strsplit(strsplit(strsplit(strsplit(as.character(file),"/")[[1]][3],"2004")[[1]][1],"RefBldg")[[1]][2],"New")[[1]][1]),
+                max_elec=max(Electricity.Facility..kW..Hourly.),
+                min_elec=min(Electricity.Facility..kW..Hourly.), 
+                avg_elec_consump=mean(Electricity.Facility..kW..Hourly.),
+                n_peaks_elec_total=dim(findpeaks(Electricity.Facility..kW..Hourly.))[1],
+                )
+
+avg_elec_per_hour_long = ddply(base_data,c("file","hour"),summarise,avg_elec_p_hour = mean(Electricity.Facility..kW..Hourly.))
+avg_elec_per_hour = dcast(avg_elec_per_hour_long,file~hour)
+avg_elec_per_hour_long = ddply(avg_elec_per_hour_long,"file",mutate, scaled_dat=avg_elec_p_hour/mean(avg_elec_p_hour))
+
+
+peak_dat = ddply(avg_elec_per_hour_long,"file",summarise,
+                 n_peaks_elec=log(dim(findpeaks(avg_elec_p_hour))[1]),
+                 highest_pk_time_elec=findpeaks(avg_elec_p_hour)[which.max(findpeaks(avg_elec_p_hour)[,1]),2]-1,
+                 highest_pk_height_elec =(findpeaks(scaled_dat)[which.max(findpeaks(scaled_dat)[,1]),1])^2,
+                 Second_peak_location_elec = ifelse(is.na(findpeaks(avg_elec_p_hour)[sort(findpeaks(avg_elec_p_hour)[,1], index.return=TRUE, decreasing = TRUE)$ix[2],2]),0,findpeaks(avg_elec_p_hour)[sort(findpeaks(avg_elec_p_hour)[,1], index.return=TRUE, decreasing = TRUE)$ix[2],2]-1),
+                 Second_peak_height_elec = ifelse(is.na(findpeaks(scaled_dat)[sort(findpeaks(scaled_dat)[,1], index.return=TRUE, decreasing = TRUE)$ix[2],1]),0,findpeaks(scaled_dat)[sort(findpeaks(scaled_dat)[,1], index.return=TRUE, decreasing = TRUE)$ix[2],1]),
+                 std_dev_elec = sd(scaled_dat),
+                 sum_of_elec = sum(avg_elec_p_hour)
+)
+
+
+
+features_total = cbind(feature,n_peaks_elec = peak_dat$n_peaks_elec,highest_pk_time_elec = peak_dat$highest_pk_time_elec,highest_pk_height_elec=peak_dat$highest_pk_height_elec, second_peak_time=peak_dat$Second_peak_location_elec,second_peak_height=peak_dat$Second_peak_height_elec,std_dev=peak_dat$std_dev_elec, sum_of_elec=peak_dat$sum_of_elec)
+
+@
+
+<<average, cache=TRUE, echo=FALSE>>=
+
+ggplot(data=filter(avg_elec_per_hour_long,file==avg_elec_per_hour_long[1,1]), aes(hour,avg_elec_p_hour)) + geom_line() + labs(title="Average Electricity Used over a Year Period for a Residential Building")+xlab("Hours of each day") + ylab("Electricity used hourly (kW)")
+@
+
+The plot shows a shape consistent with the boxplots of the none averaged data over all months. It has also reduced the dimensionality of each time series by a factor of 365.\\
+
+This data was used for classification in the subsequent parts.
+
+
+\section{Clustering}
+
+A lot of research has been undretaken for the classification of time series signals. Different methods are used such as feature extraction, similarity metrics of the raw data\cite{Wiens2009}, and model creation. \cite{WarrenLiao2005}
+
+Here we used feature extraction, and similarity metrics to cluster the data. 
+
+
+\subsection{Feature Extraction}
+
+Feature extraction is a method to summarise the data using different metrics which explain the data.
+
+The following table details the features extracted from the data. 
+\begin{table}[]
+\centering
+\caption{My caption}
+\label{my-label}
+\begin{tabular}{ll}
+\multicolumn{2}{c}{\textbf{Features Extracted}}                                                                 \\ \hline
+\multicolumn{1}{|l|}{\textbf{Entire Time Series}}  & \multicolumn{1}{l|}{\textbf{Averaged Time Series by Hour}} \\ \hline
+\multicolumn{1}{|l|}{Max Electricity Used}         & \multicolumn{1}{l|}{Number of peaks}                       \\ \hline
+\multicolumn{1}{|l|}{Minimum Electricity Used}     & \multicolumn{1}{l|}{Highest Peak Time}                     \\ \hline
+\multicolumn{1}{|l|}{Average Electricity Consumed} & \multicolumn{1}{l|}{Highest Peak Height}                   \\ \hline
+\multicolumn{1}{|l|}{Total Number of Peaks}        & \multicolumn{1}{l|}{2nd Highest Peak Time}                 \\ \hline
+\multicolumn{1}{|l|}{}                             & \multicolumn{1}{l|}{2nd Highest Peak Height}               \\ \hline
+\multicolumn{1}{|l|}{}                             & \multicolumn{1}{l|}{Standard Deviation}                    \\ \hline
+\multicolumn{1}{|l|}{}                             & \multicolumn{1}{l|}{Cumulative electricity used}           \\ \hline
+\end{tabular}
+\caption{Feature extraction for K Means Clustering}
+\end{table}
+
+
+Given these features we can map a time series to a vector of given features. These features allow us to compare different time series and enable us to cluster similar time series. 
+
+\subsection{K-Clustering}
+
+K Clustering is a technique which allows us to classify eliptical clusters of data using a predetermined number of clusters. It works based on an iterative approach of randomly initializing cluster centres, and moving each cluster, on each iteration, closer to the nearest cluster of data points.\\
+
+Different plots were made to visualise the clustering of the K Clustering technique. A silhouette plot, a PCA plot, and a boxplot which displays the clusters in the time domain. These plots are explored below. 
+
+A sample of 60 properties were taken to allow for plotting. 
+
+<<sample, cache=TRUE,echo=FALSE>>=
+features_sample=sample_n(features_total,61,replace=FALSE)
+features_sample = filter(features_sample, Building_Type!="Hospital")
+@
+
+
+A silhouette plot is a graphical display of how well points fit within a cluster. The silhouette shows which objects lie well within a cluster, and which ones are between clusters. Points with a score closer to 1 are well within their clusters, whereas points with a negative value, or value close to 0 could potentially fall in a different cluster.\\
+
+By displaying all of the clusters in a single display it is possible to compare clusters, and can be used to select k number of clusters. This is done by looking for a silhouette plot with the highest average silhouette widths, and looking for clusters containing a large amount of well positioned points. \cite{Rousseeuw1987}
+
+<<silhouette_k_plots, echo=FALSE>>=
+dissE = daisy(features_sample[-c(1,2)])
+dE2 = dissE^2
+par(mfrow=c(3,3))
+# Silhouette Plot k = 6
+kMeans6 = kmeans(features_sample[-c(1,2)],6,nstart=20)
+sk2 = silhouette(kMeans6$cluster, dE2)
+plot(sk2)
+
+# Silhouette Plot k = 7
+kMeans7 = kmeans(features_sample[-c(1,2)],7,nstart=20)
+sk2 = silhouette(kMeans7$cluster, dE2)
+plot(sk2)
+
+# Silhouette Plot k = 8
+kMeans8 = kmeans(features_sample[-c(1,2)],8,nstart=20)
+sk2 = silhouette(kMeans8$cluster, dE2)
+plot(sk2)
+
+# Silhouette Plot k =9
+kMeans9 = kmeans(features_sample[-c(1,2)],9,nstart=20)
+sk2 = silhouette(kMeans9$cluster, dE2)
+plot(sk2)
+
+# Silhouette Plot k =10
+kMeans10 = kmeans(features_sample[-c(1,2)],10,nstart=20)
+sk2 = silhouette(kMeans10$cluster, dE2)
+plot(sk2)
+
+# Silhouette Plot k =11
+kMeans11 = kmeans(features_sample[-c(1,2)],11,nstart=20)
+sk2 = silhouette(kMeans11$cluster, dE2)
+plot(sk2)
+
+# Silhouette Plot k =12
+kMeans12 = kmeans(features_sample[-c(1,2)],12,nstart=20)
+sk2 = silhouette(kMeans12$cluster, dE2)
+plot(sk2)
+
+# Silhouette Plot k =13
+kMeans13 = kmeans(features_sample[-c(1,2)],13,nstart=20)
+sk2 = silhouette(kMeans13$cluster, dE2)
+plot(sk2)
+
+# Silhouette Plot k =14
+kMeans14 = kmeans(features_sample[-c(1,2)],14,nstart=20)
+sk2 = silhouette(kMeans14$cluster, dE2)
+plot(sk2)
+
+@
+
+Based on the silhouette plots, it would be most suitable to choose 6 or 8 numbers of clusters. This is because the silhouette width is higher the lower the number of clusters in this case. \\
+
+
+The PCA plot enables us to plot many dimensions on two principal components. \\
+
+The plot displays each of the features, and the points coloured by the cluster which they have been assigned to. 
+
+The plot shows a wide spread of points, with natural clusters forming for particular types of buildings. Particularly restaurants, large hotels, small hotels, malls and retail, residential ,outpatients, and supermarkets.
+
+
+However, upon further inspection, using a PCA plot it seems that judging solely by the silhouette width may not be enough. This is because there seems to be a large cluster towards the origin of the plot. As we move further away from the origin we seem to get clusters which are not bunched so close together. \\
+
+
+
+<<pca_plot, echo=FALSE, cache=TRUE>>=
+#PCA Plot
+pca = prcomp(features_sample[-c(1,2)])
+ggbiplot(pca, groups = factor(kMeans6$cluster), ellipse = TRUE) + geom_text(aes(label=features_sample$Building_Type), alpha=0.3, size=2, nudge_x=0.15) + labs(title="K-Means clustering results plotted on PCA of feature vector, with K=6")
+@
+
+
+
+<<pca_plot_2, echo=FALSE, cache=TRUE>>=
+ggbiplot(pca, groups = factor(kMeans8$cluster), ellipse = TRUE) + geom_text(aes(label=features_sample$Building_Type), alpha=0.3, size=2, nudge_x=0.15) + labs(title="K-Means clustering results plotted on PCA of feature vector, with K=8")
+
+@
+
+
+It seems that a selection of k=8 seems to be optimal. This is because compared to 6, it correctly classifies supermarket and outpatient into their own categories, as well as creating a new category for primary school. \\
+
+However, it does not create a seperate classification for warehouse and strip mall (cluster 4). To test this, we plotted the PCA result with K=9
+
+
+<<pca_plot_3, echo=FALSE, cache=TRUE>>=
+ggbiplot(pca, groups = factor(kMeans9$cluster), ellipse = TRUE) + geom_text(aes(label=features_sample$Building_Type), alpha=0.3, size=2, nudge_x=0.15) + labs(title="K-Means clustering results plotted on PCA of feature vector, with K=8")
+
+@
+
+Plotting a PCA of the results show that the additional group does not in fact create a seperate classificatoin for warehouse and strip mall, instead creating two classes for residential properties, which is incorrect. \\
+
+I therefore left k=8.
+
+
+
+
+<<boxplot, echo=FALSE, cache=TRUE>>=
+features_sample$Cluster=kMeans8$cluster
+
+join = merge(avg_elec_per_hour_long,features_sample, by='file')
+join = join[c(1,2,3,length(join))]
+
+ggplot(join) + geom_boxplot(aes(factor(hour),avg_elec_p_hour))+facet_wrap(~Cluster, scale="free") + labs(title="Boxplot of time series sorted by cluster number")
+@
+
+A plot of all of the data in boxplots shows distinct patterns of the buildings in the time domain. We can see, and compare the clustered time series to the original patterns. Distinct patterns such as hotel, office, residential, outpatient, primary school, and restaurants can be seen. \\
+
+There seems to be a single building which has been misclasified in plot number 2. This can be seen by the outlier plot, which seems to be a warehouse. However, it can be seen that the average time series is that of residential properties. 
+
+
+\section{Hierarchical Clustering}
+
+Hierarchical clustering is a clustering method which does not require a prespecified number of clusters. There are two strategies for hierarchical clustering, agglomerative or divisive.\\
+
+Divisive starts by looking at the entire data set, and initially splitting it into two clusters. Agglomerative starts with the individual data points and build up until there is one overall cluster. The clusters are split by forming different measures between clusters which I will not go into here.\\
+
+Once a dendrogram is plotted, groups can be seen based on the distance each group is from each other. \\
+
+For the clustering we use the raw time series data, which is put through different dissimilarity metrics. These dissimilarity metrics calculate how different time series are from each other, based on measures such as euclidean distance. \\
+
+Different dissimilarity metrics are described here.
+
+\subsection{Euclidean Distance}
+
+Euclidean distance is a direct measure between points of different time series. Each point is compared to a point on a different time series, and the distance is calculated using the euclidean measure.
+
+The output is shown below. A sample of 20 buildings were clustered for the purposes of visualisation.
+
+
+<<heirarchical_clustering, echo=FALSE, cache=TRUE>>=
+elec_per_hour_matrix = data.matrix(avg_elec_per_hour[60:80,])
+distMatrix = dist(elec_per_hour_matrix, method="euclidean")
+
+hc = hclust(distMatrix, method="complete")
+plot(hc, labels=features_total[60:80,]$Building_Type, main="Euclidean Distance Dissimilarity Matrix Plot Dendogram for Hierarchical Clustering")
+rect.hclust(hc, h=100, border="blue")
+clusterCut = cutree(hc, h=100)
+@
+
+The heirarchical clustering model performs well in correctly seperating the time series into closely related groups. For instance, all 7 of the residential properties fall within the same category. This is true also for supermarket, outpatient, and secondary school. \\
+
+The accuracy of these clusters, visible in the dendogram plot seem to work better than the k-clustering technique which has more crossover.\\
+
+The problem found, however, is the inability to explicity cut each of the clusters at a precise level. It can be seen that whilst the residential properties have been correctly classified into the same group, the two supermarkets, which are both in the same dendogram, are split into two levels. \\
+
+There is a trade off at the cut off stage. Too high of a cut of a distance leads to too few groups, and too low leads to too many individual groups. Whilst a certain cut off distance works for a particular group, it may not work for another group.
+
+\subsection{Dynamic Time Warping}
+
+In this section we used dynamic time warping to calculate the dissimilarity matrix between different time series. \\
+
+Dynamic time warping differs in the euclidean difference measure, in that it assumes that one time series is a time warped version of another. ie. The time series would be more similar if the time scale was scaled accordingly. Therefore, unlike the euclidean distance measure, each point is not strictly measured to the corresponding time on the other time series. 
+<<dynamic_time_warping, echo=FALSE>>=
+distMatrix_DTW <- dist(elec_per_hour_matrix, method="DTW")
+hc_DTW = hclust(distMatrix_DTW, method="complete")
+plot(hc_DTW, labels=features_total$Building_Type[60:80], main="DTW Dissimilarity Matrix Plot Dendogram for Hierarchical Clustering")
+rect.hclust(hc, h=100, border="blue")
+@
+
+
+
+\subsection{Wavelets}
+
+
+Wavelets compute the frequency domain for a time series, based on subsets of time. We can therefore use the frequency information to compare time series for classification using a hierarchical clustering. \\
+
+The euclidean distance between the wavelet approximations are calculated for use in the hierarchical model. 
+
+<<wavelet_diss, echo=FALSE>>=
+wavelet_feature = diss.DWT(elec_per_hour_matrix)
+hc_wavelet = hclust(wavelet_feature, method = "complete")
+plot(hc_wavelet, labels=features_total$Building_Type[60:80], main="Wavelet Dissimilarity Matrix Plot Dendogram for Hierarchical Clustering")
+rect.hclust(hc, h=100, border="blue")
+@
+
+The wavelet classification seems to work slightly better than that of dynamic time warping and euclidean distance. However a very similar structure exists, with slight in ordering.
+
+
+
+
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
 
 
 \end{document}

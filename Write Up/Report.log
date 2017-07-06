@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2016.10.22)  29 JUN 2017 19:45
+This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016) (preloaded format=xelatex 2016.10.22)  6 JUL 2017 18:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -148,25 +148,41 @@ Package: longtable 2014/10/28 v4.11 Multi-page Table package (DPC)
 \c@LT@chunks=\count97
 \LT@p@ftn=\toks19
 )
+(/usr/local/texlive/2016/texmf-dist/tex/generic/ulem/ulem.sty
+\UL@box=\box30
+\UL@hyphenbox=\box31
+\UL@skip=\skip48
+\UL@hook=\toks20
+\UL@height=\dimen118
+\UL@pe=\count98
+\UL@pixel=\dimen119
+\ULC@box=\box32
+Package: ulem 2012/05/18
+\ULdepth=\dimen120
+)
 (/usr/local/texlive/2016/texmf-dist/tex/latex/upquote/upquote.sty
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 )
-(./Report.aux)
+(./Report.aux
+
+LaTeX Warning: Label `my-label' multiply defined.
+
+)
 \openout1 = `Report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 61.
-LaTeX Font Info:    ... okay on input line 61.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 64.
+LaTeX Font Info:    ... okay on input line 64.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
@@ -202,40 +218,296 @@ LaTeX Font Info:    ... okay on input line 61.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 73.
+LaTeX Font Info:    Try loading font information for U+msa on input line 76.
 (/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 73.
+LaTeX Font Info:    Try loading font information for U+msb on input line 76.
 
 (/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Underfull \hbox (badness 10000) in paragraph at lines 84--87
+Underfull \hbox (badness 10000) in paragraph at lines 88--91
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 84--87
+Underfull \hbox (badness 10000) in paragraph at lines 88--91
 
  []
 
 
-Overfull \hbox (10.03166pt too wide) in paragraph at lines 88--90
+Underfull \hbox (badness 10000) in paragraph at lines 92--93
+
+ []
+
+
+Overfull \hbox (10.03166pt too wide) in paragraph at lines 96--98
 \OT1/cmr/m/n/12 http://en.openei.org/datasets/dataset/commercial-and-residentia
 l-hourly-load-profiles-for-all-
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 101--102
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 103--104
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 105--106
+
+ []
+
+
+LaTeX Warning: No positions in optional float specifier.
+               Default added (so using `tbp') on input line 109.
+
 [1
 
-] (./Report.aux) ) 
-Here is how much of TeX's memory you used:
- 1941 strings out of 493591
- 26091 string characters out of 6143545
- 84675 words of memory out of 5000000
- 5340 multiletter control sequences out of 15000+600000
- 7442 words of font info for 29 fonts, out of 8000000 for 9000
- 1347 hyphenation exceptions out of 8191
- 27i,6n,32p,290b,190s stack positions out of 5000i,500n,10000p,200000b,80000s
+]
+Package color Info: Redefining color shadecolor on input line 159.
+File: figure/dirtyplots-1.pdf Graphic file (type QTm)
+ <use  "figure/dirtyplots-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 160--161
+[][] 
+ []
 
-Output written on Report.pdf (1 page).
+[2]
+Underfull \hbox (badness 10000) in paragraph at lines 164--165
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 166--167
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 168--169
+
+ []
+
+[3]
+Package color Info: Redefining color shadecolor on input line 176.
+File: figure/gas_plot-1.pdf Graphic file (type QTm)
+ <use  "figure/gas_plot-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 177--178
+[][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 181--182
+
+ []
+
+Package color Info: Redefining color shadecolor on input line 186.
+File: figure/plot_different_profiles-1.pdf Graphic file (type QTm)
+<use  "figure/plot_different_profiles-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 187--188
+[][] 
+ []
+
+[4]
+Underfull \hbox (badness 10000) in paragraph at lines 191--192
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 193--194
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 195--196
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 197--198
+
+ []
+
+[5]
+Underfull \hbox (badness 10000) in paragraph at lines 199--200
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 204--205
+
+ []
+
+Package color Info: Redefining color shadecolor on input line 209.
+Package color Info: Redefining color shadecolor on input line 216.
+File: figure/average-1.pdf Graphic file (type QTm)
+<use  "figure/average-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 217--218
+[][] 
+ []
+
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 221--222
+
+ []
+
+[7]
+
+LaTeX Warning: No positions in optional float specifier.
+               Default added (so using `tbp') on input line 239.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 262--263
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 273--274
+
+ []
+
+Package color Info: Redefining color shadecolor on input line 278.
+File: figure/silhouette_k_plots-1.pdf Graphic file (type QTm)
+<use  "figure/silhouette_k_plots-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 279--280
+[][] 
+ []
+
+[8]
+Underfull \hbox (badness 10000) in paragraph at lines 283--284
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 286--287
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 293--294
+
+ []
+
+[9]
+Package color Info: Redefining color shadecolor on input line 298.
+File: figure/pca_plot-1.pdf Graphic file (type QTm)
+ <use  "figure/pca_plot-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 299--300
+[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 306.
+File: figure/pca_plot_2-1.pdf Graphic file (type QTm)
+<use  "figure/pca_plot_2-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 307--308
+[][] 
+ []
+
+[10]
+Underfull \hbox (badness 10000) in paragraph at lines 312--313
+
+ []
+
+Package color Info: Redefining color shadecolor on input line 318.
+File: figure/pca_plot_3-1.pdf Graphic file (type QTm)
+<use  "figure/pca_plot_3-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 319--320
+[][] 
+ []
+
+[11]
+Underfull \hbox (badness 10000) in paragraph at lines 323--324
+
+ []
+
+Package color Info: Redefining color shadecolor on input line 332.
+File: figure/boxplot-1.pdf Graphic file (type QTm)
+<use  "figure/boxplot-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 333--334
+[][] 
+ []
+
+[12]
+Underfull \hbox (badness 10000) in paragraph at lines 337--338
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 344--345
+
+ []
+
+[13]
+Underfull \hbox (badness 10000) in paragraph at lines 346--347
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 348--349
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 350--351
+
+ []
+
+Package color Info: Redefining color shadecolor on input line 362.
+File: figure/heirarchical_clustering-1.pdf Graphic file (type QTm)
+<use  "figure/heirarchical_clustering-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 363--364
+[][] 
+ []
+
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 367--368
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 369--370
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 371--372
+
+ []
+
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 377--378
+
+ []
+
+Package color Info: Redefining color shadecolor on input line 381.
+File: figure/dynamic_time_warping-1.pdf Graphic file (type QTm)
+<use  "figure/dynamic_time_warping-1.pdf" > [16]
+Underfull \hbox (badness 10000) in paragraph at lines 391--392
+
+ []
+
+Package color Info: Redefining color shadecolor on input line 396.
+File: figure/wavelet_diss-1.pdf Graphic file (type QTm)
+<use  "figure/wavelet_diss-1.pdf" >
+Overfull \hbox (17.62482pt too wide) in paragraph at lines 397--398
+[][] 
+ []
+
+[17] (./Report.bbl [18]) [19] (./Report.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 2090 strings out of 493591
+ 27891 string characters out of 6143545
+ 88616 words of memory out of 5000000
+ 5457 multiletter control sequences out of 15000+600000
+ 13193 words of font info for 52 fonts, out of 8000000 for 9000
+ 1347 hyphenation exceptions out of 8191
+ 27i,10n,32p,565b,248s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on Report.pdf (19 pages).

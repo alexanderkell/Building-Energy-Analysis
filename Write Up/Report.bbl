@@ -1,0 +1,20 @@
+\begin{thebibliography}{1}
+
+\bibitem{Rousseeuw1987}
+Peter~J Rousseeuw.
+\newblock {Silhouettes-A graphical aid to the interpretation and validation of
+  cluster analysis}.
+\newblock 20:53--65, 1987.
+
+\bibitem{WarrenLiao2005}
+T.~{Warren Liao}.
+\newblock {Clustering of time series data - A survey}.
+\newblock {\em Pattern Recognition}, 38(11):1857--1874, 2005.
+
+\bibitem{Wiens2009}
+Jenna Wiens, John~V Guttag, and Eric Horvitz.
+\newblock {Patient Risk Stratification for Hospital-Associated C . diff as a
+  Time-Series Classification Task}.
+\newblock pages 1--9, 2009.
+
+\end{thebibliography}
